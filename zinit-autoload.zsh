@@ -79,10 +79,10 @@ ZINIT[EXTENDED_GLOB]=""
 
     # Iterate through first array (keys the same
     # on both of them though) and test for a change
-    local key
-    for key in "${(k)opts_before[@]}"; do
-        if [[ "${opts_before[$key]}" != "${opts_after[$key]}" ]]; then
-            opts[$key]="${opts_before[$key]}"
+    local key_
+    for key_ in "${(k)opts_before[@]}"; do
+        if [[ "${opts_before[$key_]}" != "${opts_after[$key_]}" ]]; then
+            opts[$key_]="${opts_before[$key_]}"
         fi
     done
 
@@ -180,22 +180,22 @@ ZINIT[EXTENDED_GLOB]=""
     # Iterate through all existing keys, before or after diff,
     # i.e. after all variables that were somehow live across
     # the diffing process
-    local key
+    local key_
     typeset -aU keys
     keys=( "${(k)params_after[@]}" );
     keys=( "${keys[@]}" "${(k)params_before[@]}" );
-    for key in "${keys[@]}"; do
-        key="${(Q)key}"
-        [[ "${params_after[$key]}" = *local* ]] && continue
-        if [[ "${params_after[$key]}" != "${params_before[$key]}" ]]; then
+    for key_ in "${keys[@]}"; do
+        key_="${(Q)key_}"
+        [[ "${params_after[$key_]}" = *local* ]] && continue
+        if [[ "${params_after[$key_]}" != "${params_before[$key_]}" ]]; then
             # Empty for a new param, a type otherwise
-            [[ -z "${params_before[$key]}" ]] && params_before[$key]="\"\""
-            params_pre[$key]="${params_before[$key]}"
+            [[ -z "${params_before[$key_]}" ]] && params_before[$key_]="\"\""
+            params_pre[$key_]="${params_before[$key_]}"
 
             # Current type, can also be empty, when plugin
             # unsets a parameter
-            [[ -z "${params_after[$key]}" ]] && params_after[$key]="\"\""
-            params_post[$key]="${params_after[$key]}"
+            [[ -z "${params_after[$key_]}" ]] && params_after[$key_]="\"\""
+            params_post[$key_]="${params_after[$key_]}"
         fi
     done
 
@@ -1420,7 +1420,7 @@ ZINIT[EXTENDED_GLOB]=""
 
     .zinit-any-to-user-plugin "$2" "$3"
     local user=${reply[-2]} plugin=${reply[-1]} st=$1 \
-        local_dir filename is_snippet key \
+        local_dir filename is_snippet key_ \
         id_as="${reply[-2]}${${reply[-2]:#(%|/)*}:+/}${reply[-1]}"
     local -A ice
 
@@ -1455,8 +1455,8 @@ ZINIT[EXTENDED_GLOB]=""
     .zinit-any-to-user-plugin ${ice[teleid]:-$id_as}
     local -a arr
     reply=( "${(@on)ZINIT_EXTS[(I)z-annex hook:preinit <->]}" )
-    for key in "${reply[@]}"; do
-        arr=( "${(Q)${(z@)ZINIT_EXTS[$key]}[@]}" )
+    for key_ in "${reply[@]}"; do
+        arr=( "${(Q)${(z@)ZINIT_EXTS[$key_]}[@]}" )
         "${arr[5]}" plugin "${reply[-2]}" "${reply[-1]}" "$id_as" "${${${(M)user:#%}:+$plugin}:-${ZINIT[PLUGINS_DIR]}/${id_as//\//---}}" preinit || \
             return $(( 10 - $? ))
     done
@@ -1523,8 +1523,8 @@ ZINIT[EXTENDED_GLOB]=""
                 # Run annexes' atpull hooks (the before atpull-ice ones)
                 [[ ${+ice[atpull]} = 1 && ${ice[atpull]} = "!"* ]] && {
                     reply=( "${(@on)ZINIT_EXTS[(I)z-annex hook:\\\!atpull <->]}" )
-                    for key in "${reply[@]}"; do
-                        arr=( "${(Q)${(z@)ZINIT_EXTS[$key]}[@]}" )
+                    for key_ in "${reply[@]}"; do
+                        arr=( "${(Q)${(z@)ZINIT_EXTS[$key_]}[@]}" )
                         "${arr[5]}" plugin "$user" "$plugin" "$id_as" "$local_dir" \!atpull
                     done
                 }
@@ -1604,8 +1604,8 @@ ZINIT[EXTENDED_GLOB]=""
                   # Run annexes' atpull hooks (the before atpull-ice ones)
                   [[ ${+ice[atpull]} = 1 && ${ice[atpull]} = "!"* ]] && {
                       reply=( "${(@on)ZINIT_EXTS[(I)z-annex hook:\\\!atpull <->]}" )
-                      for key in "${reply[@]}"; do
-                          arr=( "${(Q)${(z@)ZINIT_EXTS[$key]}[@]}" )
+                      for key_ in "${reply[@]}"; do
+                          arr=( "${(Q)${(z@)ZINIT_EXTS[$key_]}[@]}" )
                           "${arr[5]}" plugin "$user" "$plugin" "$id_as" "$local_dir" \!atpull
                       done
                   }
@@ -1687,8 +1687,8 @@ ZINIT[EXTENDED_GLOB]=""
             # Run annexes' atpull hooks (the before atpull-ice ones)
             [[ ${ice[atpull]} != "!"* ]] && {
                 reply=( "${(@on)ZINIT_EXTS[(I)z-annex hook:\\\!atpull <->]}" )
-                for key in "${reply[@]}"; do
-                    arr=( "${(Q)${(z@)ZINIT_EXTS[$key]}[@]}" )
+                for key_ in "${reply[@]}"; do
+                    arr=( "${(Q)${(z@)ZINIT_EXTS[$key_]}[@]}" )
                     "${arr[5]}" "plugin" "$user" "$plugin" "$id_as" "$local_dir" \!atpull
                 done
             }
@@ -1699,8 +1699,8 @@ ZINIT[EXTENDED_GLOB]=""
 
             # Run annexes' atpull hooks (the after atpull-ice ones)
             reply=( "${(@on)ZINIT_EXTS[(I)z-annex hook:atpull <->]}" )
-            for key in "${reply[@]}"; do
-                arr=( "${(Q)${(z@)ZINIT_EXTS[$key]}[@]}" )
+            for key_ in "${reply[@]}"; do
+                arr=( "${(Q)${(z@)ZINIT_EXTS[$key_]}[@]}" )
                 "${arr[5]}" "plugin" "$user" "$plugin" "$id_as" "$local_dir" atpull
             done
             ZINIT_ICE=()
@@ -1720,8 +1720,8 @@ ZINIT[EXTENDED_GLOB]=""
 
     # Run annexes' atpull hooks (the `always' after atpull-ice ones)
     reply=( ${(@on)ZINIT_EXTS[(I)z-annex hook:%atpull <->]} )
-    for key in "${reply[@]}"; do
-        arr=( "${(Q)${(z@)ZINIT_EXTS[$key]}[@]}" )
+    for key_ in "${reply[@]}"; do
+        arr=( "${(Q)${(z@)ZINIT_EXTS[$key_]}[@]}" )
         "${arr[5]}" "plugin" "$user" "$plugin" "$id_as" "$local_dir" \%atpull
     done
 
@@ -2664,10 +2664,10 @@ ZINIT[EXTENDED_GLOB]=""
     fi
 
     local -a arr
-    local key
+    local key_
     reply=( "${(@on)ZINIT_EXTS[(I)z-annex hook:atdelete <->]}" )
-    for key in "${reply[@]}"; do
-        arr=( "${(Q)${(z@)ZINIT_EXTS[$key]}[@]}" )
+    for key_ in "${reply[@]}"; do
+        arr=( "${(Q)${(z@)ZINIT_EXTS[$key_]}[@]}" )
         "${arr[5]}" "$1" "$2" $3 "$4" "$5" atdelete
     done
 }
@@ -3418,13 +3418,13 @@ EOF
 —— run [-l] [plugin] {command}   – runs the given command in the given plugin's directory; if the option -l will be given then the plugin should be skipped – the option will cause the previous plugin to be reused"
 
     integer idx
-    local type key
+    local type key_
     local -a arr
     for type in subcommand hook; do
         for (( idx=1; idx <= ZINIT_EXTS[seqno]; ++ idx )); do
-            key="${(k)ZINIT_EXTS[(r)$idx *]}"
-            [[ -z "$key" || "$key" != "z-annex $type:"* ]] && continue
-            arr=( "${(Q)${(z@)ZINIT_EXTS[$key]}[@]}" )
+            key_="${(k)ZINIT_EXTS[(r)$idx *]}"
+            [[ -z "$key_" || "$key_" != "z-annex $type:"* ]] && continue
+            arr=( "${(Q)${(z@)ZINIT_EXTS[$key_]}[@]}" )
             (( ${+functions[${arr[6]}]} )) && { "${arr[6]}"; ((1)); } || \
                 { print -rl -- "(Couldn't find the help-handler \`${arr[6]}' of the z-annex \`${arr[3]}')"; }
         done

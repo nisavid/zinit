@@ -1012,9 +1012,9 @@ function $f {
 # FUNCTION: @zinit-register-z-annex [[[
 # Registers the z-annex inside Zinit – i.e. an Zinit extension
 @zinit-register-annex() {
-    local name="$1" type="$2" handler="$3" helphandler="$4" icemods="$5" key="z-annex ${(q)2}"
+    local name="$1" type="$2" handler="$3" helphandler="$4" icemods="$5" key_="z-annex ${(q)2}"
     ZINIT_EXTS[seqno]=$(( ${ZINIT_EXTS[seqno]:-0} + 1 ))
-    ZINIT_EXTS[$key${${(M)type#hook:}:+ ${ZINIT_EXTS[seqno]}}]="${ZINIT_EXTS[seqno]} z-annex-data: ${(q)name} ${(q)type} ${(q)handler} ${(q)helphandler} ${(q)icemods}"
+    ZINIT_EXTS[$key_${${(M)type#hook:}:+ ${ZINIT_EXTS[seqno]}}]="${ZINIT_EXTS[seqno]} z-annex-data: ${(q)name} ${(q)type} ${(q)handler} ${(q)helphandler} ${(q)icemods}"
     ZINIT_EXTS[ice-mods]="${ZINIT_EXTS[ice-mods]}${icemods:+|}$icemods"
 }
 # ]]]
@@ -1100,7 +1100,7 @@ function $f {
 # $2 - plugin name, if the third format is used
 .zinit-load () {
     typeset -F 3 SECONDS=0
-    local mode="$3" rst=0 retval=0 key
+    local mode="$3" rst=0 retval=0 key_
     .zinit-any-to-user-plugin "$1" "$2"
     local user="${reply[-2]}" plugin="${reply[-1]}" id_as="${ZINIT_ICE[id-as]:-${reply[-2]}${${reply[-2]:#(%|/)*}:+/}${reply[-1]}}"
     ZINIT_ICE[teleid]="${ZINIT_ICE[teleid]:-$user${${user:#(%|/)*}:+/}$plugin}"
@@ -1110,8 +1110,8 @@ function $f {
 
     local -a arr
     reply=( "${(@on)ZINIT_EXTS[(I)z-annex hook:preinit <->]}" )
-    for key in "${reply[@]}"; do
-        arr=( "${(Q)${(z@)ZINIT_EXTS[$key]}[@]}" )
+    for key_ in "${reply[@]}"; do
+        arr=( "${(Q)${(z@)ZINIT_EXTS[$key_]}[@]}" )
         "${arr[5]}" plugin "$user" "$plugin" "$id_as" "${${${(M)user:#%}:+$plugin}:-${ZINIT[PLUGINS_DIR]}/${id_as//\//---}}" preinit || \
             return $(( 10 - $? ))
     done
@@ -1155,8 +1155,8 @@ function $f {
     [[ -n ${ZINIT_ICE[param]} ]] && .zinit-setup-params && local ${(Q)reply[@]}
 
     reply=( "${(@on)ZINIT_EXTS[(I)z-annex hook:\\\!atinit <->]}" )
-    for key in "${reply[@]}"; do
-        arr=( "${(Q)${(z@)ZINIT_EXTS[$key]}[@]}" )
+    for key_ in "${reply[@]}"; do
+        arr=( "${(Q)${(z@)ZINIT_EXTS[$key_]}[@]}" )
         "${arr[5]}" plugin "$user" "$plugin" "$id_as" "${${${(M)user:#%}:+$plugin}:-${ZINIT[PLUGINS_DIR]}/${id_as//\//---}}" \!atinit || \
             return $(( 10 - $? ))
     done
@@ -1164,8 +1164,8 @@ function $f {
     [[ ${+ZINIT_ICE[atinit]} = 1 && $ZINIT_ICE[atinit] != '!'*   ]] && { local __oldcd="$PWD"; (( ${+ZINIT_ICE[nocd]} == 0 )) && { () { setopt localoptions noautopushd; builtin cd -q "${${${(M)user:#%}:+$plugin}:-${ZINIT[PLUGINS_DIR]}/${id_as//\//---}}"; } && eval "${ZINIT_ICE[atinit]}"; ((1)); } || eval "${ZINIT_ICE[atinit]}"; () { setopt localoptions noautopushd; builtin cd -q "$__oldcd"; }; }
 
     reply=( "${(@on)ZINIT_EXTS[(I)z-annex hook:atinit <->]}" )
-    for key in "${reply[@]}"; do
-        arr=( "${(Q)${(z@)ZINIT_EXTS[$key]}[@]}" )
+    for key_ in "${reply[@]}"; do
+        arr=( "${(Q)${(z@)ZINIT_EXTS[$key_]}[@]}" )
         "${arr[5]}" plugin "$user" "$plugin" "$id_as" "${${${(M)user:#%}:+$plugin}:-${ZINIT[PLUGINS_DIR]}/${id_as//\//---}}" atinit || \
             return $(( 10 - $? ))
     done
@@ -1205,7 +1205,7 @@ function $f {
 
     local pbase="${${plugin:t}%(.plugin.zsh|.zsh|.git)}"
     [[ $user = % ]] && local pdir_path="$plugin" || local pdir_path="${ZINIT[PLUGINS_DIR]}/${id_as//\//---}"
-    local pdir_orig="$pdir_path" key
+    local pdir_orig="$pdir_path" key_
 
     if [[ ${ZINIT_ICE[as]} = command ]]; then
         [[ ${+ZINIT_ICE[pick]} = 1 && -z ${ZINIT_ICE[pick]} ]] && \
@@ -1240,8 +1240,8 @@ function $f {
 
         # Run the atload hooks right before atload ice
         reply=( "${(@on)ZINIT_EXTS[(I)z-annex hook:\\\!atload <->]}" )
-        for key in "${reply[@]}"; do
-            arr=( "${(Q)${(z@)ZINIT_EXTS[$key]}[@]}" )
+        for key_ in "${reply[@]}"; do
+            arr=( "${(Q)${(z@)ZINIT_EXTS[$key_]}[@]}" )
             "${arr[5]}" plugin "$user" "$plugin" "$id_as" "$pdir_orig" \!atload
         done
 
@@ -1289,8 +1289,8 @@ function $f {
 
         # Run the atload hooks right before atload ice
         reply=( "${(@on)ZINIT_EXTS[(I)z-annex hook:\\\!atload <->]}" )
-        for key in "${reply[@]}"; do
-            arr=( "${(Q)${(z@)ZINIT_EXTS[$key]}[@]}" )
+        for key_ in "${reply[@]}"; do
+            arr=( "${(Q)${(z@)ZINIT_EXTS[$key_]}[@]}" )
             "${arr[5]}" plugin "$user" "$plugin" "$id_as" "$pdir_orig" \!atload
         done
 
@@ -1310,8 +1310,8 @@ function $f {
     [[ ${+ZINIT_ICE[atload]} = 1 && ${ZINIT_ICE[atload][1]} != "!" ]] && { ZERO="$pdir_orig/-atload-"; local __oldcd="$PWD"; (( ${+ZINIT_ICE[nocd]} == 0 )) && { () { setopt localoptions noautopushd; builtin cd -q "$pdir_orig"; } && builtin eval "${ZINIT_ICE[atload]}"; ((1)); } || eval "${ZINIT_ICE[atload]}"; () { setopt localoptions noautopushd; builtin cd -q "$__oldcd"; }; }
 
     reply=( "${(@on)ZINIT_EXTS[(I)z-annex hook:atload <->]}" )
-    for key in "${reply[@]}"; do
-        arr=( "${(Q)${(z@)ZINIT_EXTS[$key]}[@]}" )
+    for key_ in "${reply[@]}"; do
+        arr=( "${(Q)${(z@)ZINIT_EXTS[$key_]}[@]}" )
         "${arr[5]}" plugin "$user" "$plugin" "$id_as" "$pdir_orig" atload
     done
 
@@ -1381,10 +1381,10 @@ function $f {
     local_dir="${reply[-3]}" exists=${reply[-1]}
 
     local -a arr
-    local key
+    local key_
     reply=( "${(@on)ZINIT_EXTS[(I)z-annex hook:preinit <->]}" )
-    for key in "${reply[@]}"; do
-        arr=( "${(Q)${(z@)ZINIT_EXTS[$key]}[@]}" )
+    for key_ in "${reply[@]}"; do
+        arr=( "${(Q)${(z@)ZINIT_EXTS[$key_]}[@]}" )
         "${arr[5]}" snippet "$save_url" "$id_as" "$local_dir/$dirname" preinit || \
             return $(( 10 - $? ))
     done
@@ -1403,8 +1403,8 @@ function $f {
     ZINIT[CUR_USPL2]="$id_as" ZINIT_REPORTS[$id_as]=
 
     reply=( "${(@on)ZINIT_EXTS[(I)z-annex hook:\\\!atinit <->]}" )
-    for key in "${reply[@]}"; do
-        arr=( "${(Q)${(z@)ZINIT_EXTS[$key]}[@]}" )
+    for key_ in "${reply[@]}"; do
+        arr=( "${(Q)${(z@)ZINIT_EXTS[$key_]}[@]}" )
         "${arr[5]}" snippet "$save_url" "$id_as" "$local_dir/$dirname" \!atinit || \
             return $(( 10 - $? ))
     done
@@ -1412,8 +1412,8 @@ function $f {
     (( ${+ZINIT_ICE[atinit]} )) && { local __oldcd="$PWD"; (( ${+ZINIT_ICE[nocd]} == 0 )) && { () { setopt localoptions noautopushd; builtin cd -q "$local_dir/$dirname"; } && eval "${ZINIT_ICE[atinit]}"; ((1)); } || eval "${ZINIT_ICE[atinit]}"; () { setopt localoptions noautopushd; builtin cd -q "$__oldcd"; }; }
 
     reply=( "${(@on)ZINIT_EXTS[(I)z-annex hook:atinit <->]}" )
-    for key in "${reply[@]}"; do
-        arr=( "${(Q)${(z@)ZINIT_EXTS[$key]}[@]}" )
+    for key_ in "${reply[@]}"; do
+        arr=( "${(Q)${(z@)ZINIT_EXTS[$key_]}[@]}" )
         "${arr[5]}" snippet "$save_url" "$id_as" "$local_dir/$dirname" atinit || \
             return $(( 10 - $? ))
     done
@@ -1465,8 +1465,8 @@ function $f {
 
         # Run the atload hooks right before atload ice
         reply=( "${(@on)ZINIT_EXTS[(I)z-annex hook:\\\!atload <->]}" )
-        for key in "${reply[@]}"; do
-            arr=( "${(Q)${(z@)ZINIT_EXTS[$key]}[@]}" )
+        for key_ in "${reply[@]}"; do
+            arr=( "${(Q)${(z@)ZINIT_EXTS[$key_]}[@]}" )
             "${arr[5]}" snippet "$save_url" "$id_as" "$local_dir/$dirname" \!atload
         done
 
@@ -1517,8 +1517,8 @@ function $f {
 
         # Run the atload hooks right before atload ice
         reply=( "${(@on)ZINIT_EXTS[(I)z-annex hook:\\\!atload <->]}" )
-        for key in "${reply[@]}"; do
-            arr=( "${(Q)${(z@)ZINIT_EXTS[$key]}[@]}" )
+        for key_ in "${reply[@]}"; do
+            arr=( "${(Q)${(z@)ZINIT_EXTS[$key_]}[@]}" )
             "${arr[5]}" snippet "$save_url" "$id_as" "$local_dir/$dirname" \!atload
         done
 
@@ -1538,8 +1538,8 @@ function $f {
     (( ${+ZINIT_ICE[atload]} )) && [[ ${ZINIT_ICE[atload][1]} != "!" ]] && { ZERO="$local_dir/$dirname/-atload-"; local __oldcd="$PWD"; (( ${+ZINIT_ICE[nocd]} == 0 )) && { () { setopt localoptions noautopushd; builtin cd -q "$local_dir/$dirname"; } && builtin eval "${ZINIT_ICE[atload]}"; ((1)); } || eval "${ZINIT_ICE[atload]}"; () { setopt localoptions noautopushd; builtin cd -q "$__oldcd"; }; }
 
     reply=( "${(@on)ZINIT_EXTS[(I)z-annex hook:atload <->]}" )
-    for key in "${reply[@]}"; do
-        arr=( "${(Q)${(z@)ZINIT_EXTS[$key]}[@]}" )
+    for key_ in "${reply[@]}"; do
+        arr=( "${(Q)${(z@)ZINIT_EXTS[$key_]}[@]}" )
         "${arr[5]}" snippet "$save_url" "$id_as" "$local_dir/$dirname" atload
     done
 

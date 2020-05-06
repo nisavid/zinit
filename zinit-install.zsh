@@ -156,15 +156,15 @@ builtin source "${ZINIT[BIN_DIR]}/zinit-side.zsh" || { print -P "${ZINIT[col-err
         required=${jsondata1[required]:-${jsondata1[requires]}}
 
     local -a profiles
-    local key value
+    local key_ value
     integer pos
     profiles=( ${(@Q)${(@z)Strings[2/2]}} )
     profiles=( ${profiles[@]:#$'\0'--object--$'\0'} )
     pos=${${(@Q)${(@z)Strings[2/2]}}[(I)$profile]}
     if (( pos )) {
-        for key value ( "${(@Q)${(@z)Strings[3/$(( (pos + 1) / 2 ))]}}" ) {
-            (( ${+ZINIT_ICE[$key]} )) && [[ ${ZINIT_ICE[$key]} != +* ]] && continue
-            ZINIT_ICE[$key]=$value${ZINIT_ICE[$key]#+}
+        for key_ value ( "${(@Q)${(@z)Strings[3/$(( (pos + 1) / 2 ))]}}" ) {
+            (( ${+ZINIT_ICE[$key_]} )) && [[ ${ZINIT_ICE[$key_]} != +* ]] && continue
+            ZINIT_ICE[$key_]=$value${ZINIT_ICE[$key_]#+}
         }
         ZINIT_ICE=( "${(kv)ZINIT_ICE[@]//\\\"/\"}" )
         [[ ${ZINIT_ICE[as]} = program ]] && ZINIT_ICE[as]="command"
@@ -488,8 +488,8 @@ builtin source "${ZINIT[BIN_DIR]}/zinit-side.zsh" || { print -P "${ZINIT[col-err
             .zinit-store-ices "$local_path/._zinit" ZINIT_ICE "" "" "" ""
 
             reply=( "${(@on)ZINIT_EXTS[(I)z-annex hook:\\\!atclone <->]}" )
-            for key in "${reply[@]}"; do
-                arr=( "${(Q)${(z@)ZINIT_EXTS[$key]}[@]}" )
+            for key_ in "${reply[@]}"; do
+                arr=( "${(Q)${(z@)ZINIT_EXTS[$key_]}[@]}" )
                 "${arr[5]}" "plugin" "$user" "$plugin" "$id_as" "$local_path" \!atclone
             done
 
@@ -506,8 +506,8 @@ builtin source "${ZINIT[BIN_DIR]}/zinit-side.zsh" || { print -P "${ZINIT[col-err
 
             # Run annexes' atclone hooks (the after atclone-ice ones)
             reply=( "${(@on)ZINIT_EXTS[(I)z-annex hook:atclone <->]}" )
-            for key in "${reply[@]}"; do
-                arr=( "${(Q)${(z@)ZINIT_EXTS[$key]}[@]}" )
+            for key_ in "${reply[@]}"; do
+                arr=( "${(Q)${(z@)ZINIT_EXTS[$key_]}[@]}" )
                 "${arr[5]}" "plugin" "$user" "$plugin" "$id_as" "$local_path" atclone
             done
         }
@@ -979,8 +979,8 @@ builtin source "${ZINIT[BIN_DIR]}/zinit-side.zsh" || { print -P "${ZINIT[col-err
                         # Run annexes' atpull hooks (the before atpull-ice ones)
                         [[ ${ZINIT_ICE[atpull][1]} = *"!"* ]] && {
                             reply=( "${(@on)ZINIT_EXTS[(I)z-annex hook:\\\!atpull <->]}" )
-                            for key in "${reply[@]}"; do
-                                arr=( "${(Q)${(z@)ZINIT_EXTS[$key]}[@]}" )
+                            for key_ in "${reply[@]}"; do
+                                arr=( "${(Q)${(z@)ZINIT_EXTS[$key_]}[@]}" )
                                 "${arr[5]}" "snippet" "$save_url" "$id_as" "$local_dir/$dirname" \!atpull
 
                             done
@@ -1069,8 +1069,8 @@ builtin source "${ZINIT[BIN_DIR]}/zinit-side.zsh" || { print -P "${ZINIT[col-err
                     # Run annexes' atpull hooks (the before atpull-ice ones)
                     [[ $update = -u && ${ZINIT_ICE[atpull][1]} = *"!"* ]] && {
                         reply=( "${(@on)ZINIT_EXTS[(I)z-annex hook:\\\!atpull <->]}" )
-                        for key in "${reply[@]}"; do
-                            arr=( "${(Q)${(z@)ZINIT_EXTS[$key]}[@]}" )
+                        for key_ in "${reply[@]}"; do
+                            arr=( "${(Q)${(z@)ZINIT_EXTS[$key_]}[@]}" )
                             "${arr[5]}" snippet "$save_url" "$id_as" "$local_dir/$dirname" \!atpull
                         done
                     }
@@ -1135,8 +1135,8 @@ builtin source "${ZINIT[BIN_DIR]}/zinit-side.zsh" || { print -P "${ZINIT[col-err
             # Run annexes' atpull hooks (the before atpull-ice ones)
             [[ $update = -u && ${ZINIT_ICE[atpull][1]} = *"!"* ]] && {
                 reply=( "${(@on)ZINIT_EXTS[(I)z-annex hook:\\\!atpull <->]}" )
-                for key in "${reply[@]}"; do
-                    arr=( "${(Q)${(z@)ZINIT_EXTS[$key]}[@]}" )
+                for key_ in "${reply[@]}"; do
+                    arr=( "${(Q)${(z@)ZINIT_EXTS[$key_]}[@]}" )
                     "${arr[5]}" "snippet" "$save_url" "$id_as" "$local_dir/$dirname" \!atpull
                 done
             }
@@ -1175,8 +1175,8 @@ builtin source "${ZINIT[BIN_DIR]}/zinit-side.zsh" || { print -P "${ZINIT[col-err
         (( retval == 0 )) && {
             # Run annexes' atpull hooks (the `always' after atpull-ice ones)
             reply=( ${(@on)ZINIT_EXTS[(I)z-annex hook:%atpull <->]} )
-            for key in "${reply[@]}"; do
-                arr=( "${(Q)${(z@)ZINIT_EXTS[$key]}[@]}" )
+            for key_ in "${reply[@]}"; do
+                arr=( "${(Q)${(z@)ZINIT_EXTS[$key_]}[@]}" )
                 "${arr[5]}" snippet "$save_url" "$id_as" "$local_dir/$dirname" \%atpull
             done
 
@@ -1249,8 +1249,8 @@ builtin source "${ZINIT[BIN_DIR]}/zinit-side.zsh" || { print -P "${ZINIT[col-err
             # Run annexes' atpull hooks (the before atpull-ice ones)
             [[ ${ZINIT_ICE[atpull][1]} != *"!"* ]] && {
                 reply=( "${(@on)ZINIT_EXTS[(I)z-annex hook:\\\!atpull <->]}" )
-                for key in "${reply[@]}"; do
-                    arr=( "${(Q)${(z@)ZINIT_EXTS[$key]}[@]}" )
+                for key_ in "${reply[@]}"; do
+                    arr=( "${(Q)${(z@)ZINIT_EXTS[$key_]}[@]}" )
                     "${arr[5]}" "snippet" "$save_url" "$id_as" "$local_dir/$dirname" \!atpull
                 done
             }
@@ -1259,8 +1259,8 @@ builtin source "${ZINIT[BIN_DIR]}/zinit-side.zsh" || { print -P "${ZINIT[col-err
         } else {
             # Run annexes' atclone hooks (the before atclone-ice ones)
             reply=( "${(@on)ZINIT_EXTS[(I)z-annex hook:\\\!atclone <->]}" )
-            for key in "${reply[@]}"; do
-                arr=( "${(Q)${(z@)ZINIT_EXTS[$key]}[@]}" )
+            for key_ in "${reply[@]}"; do
+                arr=( "${(Q)${(z@)ZINIT_EXTS[$key_]}[@]}" )
                 "${arr[5]}" snippet "$save_url" "$id_as" "$local_dir/$dirname" \!atclone
             done
 
@@ -1275,8 +1275,8 @@ builtin source "${ZINIT[BIN_DIR]}/zinit-side.zsh" || { print -P "${ZINIT[col-err
 
             # Run annexes' atclone hooks (the after atclone-ice ones)
             reply=( "${(@on)ZINIT_EXTS[(I)z-annex hook:atclone <->]}" )
-            for key in "${reply[@]}"; do
-                arr=( "${(Q)${(z@)ZINIT_EXTS[$key]}[@]}" )
+            for key_ in "${reply[@]}"; do
+                arr=( "${(Q)${(z@)ZINIT_EXTS[$key_]}[@]}" )
                 "${arr[5]}" snippet "$save_url" "$id_as" "$local_dir/$dirname" atclone
             done
         }
@@ -1286,8 +1286,8 @@ builtin source "${ZINIT[BIN_DIR]}/zinit-side.zsh" || { print -P "${ZINIT[col-err
         # Run annexes' atpull hooks (the after atpull-ice ones)
         [[ $update = -u ]] && {
             reply=( "${(@on)ZINIT_EXTS[(I)z-annex hook:atpull <->]}" )
-            for key in "${reply[@]}"; do
-                arr=( "${(Q)${(z@)ZINIT_EXTS[$key]}[@]}" )
+            for key_ in "${reply[@]}"; do
+                arr=( "${(Q)${(z@)ZINIT_EXTS[$key_]}[@]}" )
                 "${arr[5]}" snippet "$save_url" "$id_as" "$local_dir/$dirname" atpull
             done
 
@@ -1299,8 +1299,8 @@ builtin source "${ZINIT[BIN_DIR]}/zinit-side.zsh" || { print -P "${ZINIT[col-err
 
             # Run annexes' atpull hooks (the `always' after atpull-ice ones)
             reply=( ${(@on)ZINIT_EXTS[(I)z-annex hook:%atpull <->]} )
-            for key in "${reply[@]}"; do
-                arr=( "${(Q)${(z@)ZINIT_EXTS[$key]}[@]}" )
+            for key_ in "${reply[@]}"; do
+                arr=( "${(Q)${(z@)ZINIT_EXTS[$key_]}[@]}" )
                 "${arr[5]}" snippet "$save_url" "$id_as" "$local_dir/$dirname" \%atpull
             done
 
@@ -1417,10 +1417,10 @@ builtin source "${ZINIT[BIN_DIR]}/zinit-side.zsh" || { print -P "${ZINIT[col-err
     filename=$reply[-2] dirname=$reply[-2] local_dir=$reply[-3]
 
     local -a arr
-    local key
+    local key_
     reply=( "${(@on)ZINIT_EXTS[(I)z-annex hook:preinit <->]}" )
-    for key in "${reply[@]}"; do
-        arr=( "${(Q)${(z@)ZINIT_EXTS[$key]}[@]}" )
+    for key_ in "${reply[@]}"; do
+        arr=( "${(Q)${(z@)ZINIT_EXTS[$key_]}[@]}" )
         "${arr[5]}" snippet "$save_url" "$id_as" "$local_dir/$dirname" u-preinit || \
             return $(( 10 - $? ))
     done
